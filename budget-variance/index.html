@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Power Plant FP&A — Budget · Actual · Forecast Variance Review</title>
+<meta name="description" content="Editorial single-page variance review for a 720 MW power plant — B/A/F by department and cost centre. Designed by S. Zaigham Ali, CPA · ACCA." />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4EFE2; --paper2:#FBF7EC; --ink:#181818; --ink2:#3A3A36; --muted:#6F6A60;
+    --sage:#1F5C3F; --sage2:#D8E3D9; --terra:#B85A2E; --terra2:#F3DDCE;
+    --navy:#1A2E5C; --gold:#9B7A1C; --rule:#D6CCB2; --rule2:#E8DFC8;
+    --red:#B83232; --green:#1F7A3F;
+  }
+  *{box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+  html,body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;}
+  .serif{font-family:'Fraunces',Georgia,serif;font-feature-settings:"ss01" on,"ss02" on;letter-spacing:-.005em;}
+  .mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;}
+  .small-caps{font-family:'IBM Plex Sans';letter-spacing:.18em;text-transform:uppercase;font-size:10px;font-weight:600;color:var(--muted);}
+  .rule-t{border-top:1px solid var(--rule);}
+  .rule-b{border-bottom:1px solid var(--rule);}
+  .rule-l{border-left:1px solid var(--rule);}
+  .rule-r{border-right:1px solid var(--rule);}
+  .hairline{border-top:1px solid var(--rule2);}
+  .panel{background:var(--paper2);border:1px solid var(--rule);}
+  .filter{background:#fff;border:1px solid var(--rule);border-radius:0;padding:7px 10px;font-size:12px;font-weight:500;color:var(--ink);cursor:pointer;font-family:'IBM Plex Sans';}
+  .filter:focus{outline:2px solid var(--sage);outline-offset:1px;}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:0;border:1px solid var(--ink);background:transparent;color:var(--ink);font-weight:600;}
+  .badge-sage{background:var(--sage2);border-color:var(--sage);color:var(--sage);}
+  .badge-terra{background:var(--terra2);border-color:var(--terra);color:var(--terra);}
+  .badge-gold{background:#F4E9C2;border-color:var(--gold);color:var(--gold);}
+  .pill-sage{background:var(--sage2);color:var(--sage);padding:2px 8px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:0;display:inline-block;}
+  .pill-terra{background:var(--terra2);color:var(--terra);padding:2px 8px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:0;display:inline-block;}
+  .pill-gold{background:#F4E9C2;color:var(--gold);padding:2px 8px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:0;display:inline-block;}
+  .num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" on;}
+  .pos{color:var(--green);}
+  .neg{color:var(--red);}
+  table.lh{width:100%;border-collapse:collapse;}
+  table.lh th{font-family:'IBM Plex Sans';font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:right;padding:8px 8px;border-bottom:2px solid var(--ink);}
+  table.lh th:first-child,table.lh td:first-child{text-align:left;}
+  table.lh td{padding:8px 8px;border-bottom:1px solid var(--rule);font-size:12.5px;text-align:right;vertical-align:top;}
+  table.lh tr:hover td{background:rgba(31,92,63,.05);}
+  table.lh tfoot td{border-top:2px solid var(--ink);border-bottom:none;padding-top:11px;font-weight:600;}
+  .seg{height:5px;background:var(--rule2);position:relative;overflow:hidden;}
+  .seg>span{position:absolute;top:0;bottom:0;}
+  .ed-rule{height:1px;background:linear-gradient(90deg,var(--ink),transparent);}
+  .nav-item{display:flex;align-items:center;gap:9px;padding:8px 14px;font-size:12px;color:var(--ink2);font-weight:500;cursor:pointer;}
+  .nav-item.on{background:var(--ink);color:var(--paper);font-weight:600;}
+  .nav-item .dot{width:5px;height:5px;border-radius:0;background:var(--rule);}
+  .nav-item.on .dot{background:var(--terra);}
+  .hcell{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-family:'IBM Plex Mono';font-weight:600;padding:6px 4px;}
+  .hhead{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;padding:5px 4px;border-bottom:1px solid var(--rule);}
+  .hrow{font-size:11px;color:var(--ink);text-align:left;padding:6px 4px;border-right:1px solid var(--rule);background:#fff;font-weight:500;}
+  @media print{ body{background:#fff;} .panel{box-shadow:none;} }
+</style>
+</head>
+<body>
+
+<div class="flex min-h-screen">
+
+  <!-- LEFT EDITORIAL SIDEBAR -->
+  <aside class="w-[210px] flex-shrink-0 rule-r" style="background:#1F1F1F;color:#EFE6CF;">
+    <div class="px-5 py-6 border-b border-[#3A3A36]">
+      <div class="serif font-bold text-2xl leading-tight" style="color:#F4EFE2">Bazian<br/>Power</div>
+      <div class="small-caps mt-2" style="color:#9F9783">720 MW · Independent Power Producer</div>
+    </div>
+    <div class="px-3 py-4">
+      <div class="small-caps px-3 mb-2" style="color:#9F9783">Modules</div>
+      <div class="nav-item on"><span class="dot"></span>Variance Review</div>
+      <div class="nav-item"><span class="dot"></span>P&amp;L Walk</div>
+      <div class="nav-item"><span class="dot"></span>Cash &amp; Treasury</div>
+      <div class="nav-item"><span class="dot"></span>Generation &amp; Heat Rate</div>
+      <div class="nav-item"><span class="dot"></span>Fuel Procurement</div>
+      <div class="nav-item"><span class="dot"></span>CAPEX Tracker</div>
+      <div class="nav-item"><span class="dot"></span>HSE &amp; Outages</div>
+    </div>
+    <div class="px-5 py-4 border-t border-[#3A3A36] mt-4">
+      <div class="small-caps mb-2" style="color:#9F9783">Period</div>
+      <select id="period" class="filter w-full">
+        <option>YTD · September 2025</option><option>Q1 2025</option><option>Q2 2025</option><option>Q3 2025</option><option>Q4 2025</option><option>Full Year 2025</option>
+      </select>
+      <div class="small-caps mt-3 mb-2" style="color:#9F9783">Year</div>
+      <select id="year" class="filter w-full"><option>2024</option><option selected>2025</option><option>2026</option></select>
+      <div class="small-caps mt-3 mb-2" style="color:#9F9783">View</div>
+      <select id="entity" class="filter w-full"><option>Consolidated</option><option>Plant Ops</option><option>Maintenance</option><option>Fuel desk</option></select>
+    </div>
+    <div class="px-5 py-4 border-t border-[#3A3A36] mt-2">
+      <div class="small-caps mb-2" style="color:#9F9783">Data sources</div>
+      <div class="text-[11px] leading-relaxed" style="color:#C8BFA8">
+        Oracle Financials<br/>
+        Hyperion HPM<br/>
+        MV90 meter reads<br/>
+        <span class="mono text-[10px]" id="lastSync">—</span>
+      </div>
+    </div>
+    <div class="px-5 py-5 border-t border-[#3A3A36] mt-2 text-[11px]" style="color:#C8BFA8">
+      Edited by<br/>
+      <span class="serif font-semibold text-base" style="color:#F4EFE2">S. Zaigham Ali</span><br/>
+      <span class="small-caps" style="color:#9F9783">CPA · ACCA · Director FP&amp;A</span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 px-8 py-7">
+
+    <!-- MASTHEAD -->
+    <section class="rule-b pb-6 mb-6">
+      <div class="flex items-baseline justify-between gap-6 flex-wrap">
+        <div>
+          <div class="small-caps">Volume IX · Issue 09 · September 2025</div>
+          <h1 class="serif font-black mt-2 leading-[0.95]" style="font-size:54px;letter-spacing:-.02em;">The Variance Review</h1>
+          <div class="serif italic text-lg mt-2" style="color:var(--ink2)">A monthly account of how operating dirhams were planned, spent and re-projected across the plant.</div>
+        </div>
+        <div class="text-right">
+          <div class="small-caps">Reporting Period</div>
+          <div class="serif text-3xl font-bold mt-1" id="periodLabel">YTD · Jan – Sep 2025</div>
+          <div class="text-xs mt-1" style="color:var(--muted)">Currency · USD '000 unless stated</div>
+        </div>
+      </div>
+      <div class="ed-rule mt-6"></div>
+    </section>
+
+    <!-- HEADLINE KPI ROW -->
+    <section class="grid grid-cols-12 gap-5 mb-7">
+      <div class="col-span-12 md:col-span-3 rule-r pr-5">
+        <div class="small-caps">Lead story</div>
+        <h2 class="serif text-3xl font-bold leading-tight mt-2">Plant <span style="color:var(--sage)">under-spent</span> by <span class="num" id="varHeadline">—</span> through September, with fuel savings absorbing maintenance over-runs.</h2>
+        <div class="text-xs mt-3" style="color:var(--ink2)">Gas hedge tier locked at $7.20/mmBtu since April delivered the bulk of favourable variance; Bonga-X unplanned overhaul drove the principal overrun.</div>
+      </div>
+      <div class="col-span-6 md:col-span-2 panel p-4">
+        <div class="small-caps">Budget YTD</div>
+        <div class="num text-3xl font-semibold mt-2" id="kBud">—</div>
+        <div class="text-xs mt-1" style="color:var(--muted)">USD · operating + small capex</div>
+      </div>
+      <div class="col-span-6 md:col-span-2 panel p-4" style="background:var(--sage2);border-color:var(--sage);">
+        <div class="small-caps" style="color:var(--sage)">Actual YTD</div>
+        <div class="num text-3xl font-semibold mt-2" style="color:var(--sage)" id="kAct">—</div>
+        <div class="text-xs mt-1" style="color:var(--sage)">Oracle GL · trial balance</div>
+      </div>
+      <div class="col-span-6 md:col-span-2 panel p-4">
+        <div class="small-caps">Forecast FY</div>
+        <div class="num text-3xl font-semibold mt-2" id="kFc">—</div>
+        <div class="text-xs mt-1" style="color:var(--muted)">YTD actual + remaining plan</div>
+      </div>
+      <div class="col-span-6 md:col-span-3 panel p-4" style="background:var(--terra2);border-color:var(--terra);">
+        <div class="small-caps" style="color:var(--terra)">Variance · A vs B</div>
+        <div class="num text-3xl font-semibold mt-2" id="kVar" style="color:var(--terra)">—</div>
+        <div class="flex items-center justify-between mt-1 text-xs">
+          <span style="color:var(--terra)" id="kVarPct">—</span>
+          <span class="pill-sage" id="vTag">favourable</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPERATING METRICS BAND -->
+    <section class="grid grid-cols-12 gap-5 mb-7 rule-b pb-7">
+      <div class="col-span-3">
+        <div class="small-caps">Generation</div>
+        <div class="serif font-bold mt-1" style="font-size:34px;line-height:1"><span class="num" id="kMW">3,540</span> <span class="text-base font-normal" style="color:var(--muted)">GWh</span></div>
+        <div class="text-xs mt-1" style="color:var(--ink2)">Availability <span class="num" id="kAvail">92.4%</span> · Heat rate 7,540 Btu/kWh</div>
+      </div>
+      <div class="col-span-3">
+        <div class="small-caps">Cost per MWh</div>
+        <div class="serif font-bold mt-1" style="font-size:34px;line-height:1"><span class="num" id="kCMWh">$28.0</span></div>
+        <div class="text-xs mt-1" style="color:var(--ink2)">Budget <span class="num" id="kCMWhBud">$27.2</span> · +2.9%</div>
+      </div>
+      <div class="col-span-3">
+        <div class="small-caps">Forced outages</div>
+        <div class="serif font-bold mt-1" style="font-size:34px;line-height:1"><span class="num">3</span> <span class="text-base font-normal" style="color:var(--muted)">events</span></div>
+        <div class="text-xs mt-1" style="color:var(--ink2)">36 lost hours · within EFOR band</div>
+      </div>
+      <div class="col-span-3">
+        <div class="small-caps">Headcount</div>
+        <div class="serif font-bold mt-1" style="font-size:34px;line-height:1"><span class="num">214</span> <span class="text-base font-normal" style="color:var(--muted)">FTE</span></div>
+        <div class="text-xs mt-1" style="color:var(--ink2)">Plan 220 · -2.7%</div>
+      </div>
+    </section>
+
+    <!-- DEPARTMENT VARIANCE TABLE -->
+    <section class="mb-7">
+      <div class="flex items-baseline justify-between mb-3">
+        <div>
+          <div class="small-caps">Chapter One</div>
+          <h3 class="serif text-2xl font-bold mt-1">By department &amp; cost centre.</h3>
+        </div>
+        <span class="badge">USD '000 · YTD</span>
+      </div>
+      <table class="lh">
+        <thead>
+          <tr><th>Department</th><th>Cost Centre</th><th>Budget</th><th>Actual</th><th>Forecast</th><th>Var $</th><th>Var %</th><th>FY Outlook</th></tr>
+        </thead>
+        <tbody id="deptBody"></tbody>
+        <tfoot><tr>
+          <td><strong>Total — Plant operating budget</strong></td><td></td>
+          <td class="num" id="tBud">—</td>
+          <td class="num" id="tAct">—</td>
+          <td class="num" id="tFc">—</td>
+          <td class="num" id="tVar">—</td>
+          <td class="num" id="tVarPct">—</td>
+          <td id="tOutlook">—</td>
+        </tr></tfoot>
+      </table>
+    </section>
+
+    <!-- TWO-COLUMN: Department comparison chart + cost mix + commentary -->
+    <section class="grid grid-cols-12 gap-6 mb-7">
+
+      <div class="col-span-12 lg:col-span-5">
+        <div class="small-caps">Chapter Two — at a glance</div>
+        <h3 class="serif text-2xl font-bold mt-1">B / A / F by department.</h3>
+        <p class="text-xs mt-2 mb-3" style="color:var(--ink2)">Each row reads as planned (sand), realised (sage) and projected (terracotta). Bars are normalised to the budget for that line.</p>
+        <div id="deptRows" class="space-y-2.5"></div>
+      </div>
+
+      <div class="col-span-12 lg:col-span-3">
+        <div class="small-caps">Chapter Three — composition</div>
+        <h3 class="serif text-2xl font-bold mt-1">Where the spend went.</h3>
+        <div class="relative mt-4">
+          <canvas id="mixChart" height="180"></canvas>
+          <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <div class="small-caps">Total</div>
+            <div class="serif text-xl font-bold mt-1 num" id="mixTotal">—</div>
+          </div>
+        </div>
+        <div class="text-xs mt-3 space-y-1.5">
+          <div class="flex justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 inline-block" style="background:#1F5C3F"></span>Fuel</div><span class="num" id="mix1">—</span></div>
+          <div class="flex justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 inline-block" style="background:#1A2E5C"></span>Labour</div><span class="num" id="mix2">—</span></div>
+          <div class="flex justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 inline-block" style="background:#B85A2E"></span>Maintenance</div><span class="num" id="mix3">—</span></div>
+          <div class="flex justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 inline-block" style="background:#9B7A1C"></span>G&amp;A &amp; Other</div><span class="num" id="mix4">—</span></div>
+        </div>
+      </div>
+
+      <div class="col-span-12 lg:col-span-4 rule-l pl-6">
+        <div class="small-caps">Chapter Four — drivers</div>
+        <h3 class="serif text-2xl font-bold mt-1">What moved the number.</h3>
+        <div class="mt-4">
+          <div class="small-caps mb-2">Top favourable</div>
+          <ul id="topFav" class="space-y-2 text-sm"></ul>
+        </div>
+        <div class="hairline my-4"></div>
+        <div>
+          <div class="small-caps mb-2">Top unfavourable</div>
+          <ul id="topUnf" class="space-y-2 text-sm"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- MONTHLY TREND CHART -->
+    <section class="grid grid-cols-12 gap-6 mb-7">
+      <div class="col-span-12 lg:col-span-8">
+        <div class="small-caps">Chapter Five — the year, month by month</div>
+        <h3 class="serif text-2xl font-bold mt-1">Cumulative OPEX walk.</h3>
+        <canvas id="monthlyChart" height="170" class="mt-3"></canvas>
+      </div>
+      <div class="col-span-12 lg:col-span-4">
+        <div class="small-caps">Editor's note</div>
+        <h3 class="serif text-2xl font-bold mt-1">Three lines that defined the quarter.</h3>
+        <ol class="serif text-base leading-relaxed mt-3 space-y-3 list-decimal list-inside" style="color:var(--ink2)">
+          <li><strong>Fuel — Gas (CC-1300)</strong>: $2.32M under plan, courtesy of the Q1 hedge bracket and three weeks of cooler ambient temperatures lifting heat-rate performance.</li>
+          <li><strong>Mechanical Maintenance (CC-1210)</strong>: $0.27M overrun on Unit-2 HRSG tube replacements; an additional $1.10M is contracted for Q4 — visible in the forecast.</li>
+          <li><strong>IT &amp; Cyber (CC-1800)</strong>: $0.19M overrun is intentional — accelerated OT segmentation under the new NIS2 regime.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- COST CENTRE × MONTH HEATMAP -->
+    <section class="mb-7">
+      <div class="flex items-baseline justify-between mb-3">
+        <div>
+          <div class="small-caps">Chapter Six — the grid</div>
+          <h3 class="serif text-2xl font-bold mt-1">Cost-centre variance, by month.</h3>
+        </div>
+        <div class="flex items-center gap-3 text-xs" style="color:var(--ink2)">
+          <span>Favourable</span>
+          <div class="flex">
+            <span class="w-6 h-3 inline-block" style="background:#1F5C3F"></span>
+            <span class="w-6 h-3 inline-block" style="background:#8FB59C"></span>
+            <span class="w-6 h-3 inline-block" style="background:#E7E0CC"></span>
+            <span class="w-6 h-3 inline-block" style="background:#E0A98D"></span>
+            <span class="w-6 h-3 inline-block" style="background:#B85A2E"></span>
+          </div>
+          <span>Unfavourable</span>
+        </div>
+      </div>
+      <div id="heatmap" class="panel p-3"></div>
+      <div class="text-xs mt-2" style="color:var(--muted)">Cells show variance % vs monthly budget. Positive = under budget. Hover the row label for the cost-centre code.</div>
+    </section>
+
+    <!-- COLOPHON FOOTER -->
+    <footer class="rule-t pt-5 mt-8 flex flex-wrap justify-between items-end gap-3 text-xs" style="color:var(--muted)">
+      <div>
+        <div class="serif text-base font-semibold" style="color:var(--ink)">The Variance Review</div>
+        <div>A sample editorial dashboard · Bazian Power Generation Co. · figures synthesised for demonstration.</div>
+      </div>
+      <div class="text-right">
+        <div>Designed &amp; built by <span class="serif font-semibold" style="color:var(--ink)">S. Zaigham Ali</span> · CPA · ACCA</div>
+        <div><a href="https://zaighamali.github.io/" class="underline">zaighamali.github.io</a></div>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+/* ===== DATA ===== */
+const departments = [
+  { name:"Plant Operations",         cc:"CC-1100", budget:18420, actual:18190, forecast:24780, outlook:"on-plan",  note:"availability 92.4%" },
+  { name:"Mechanical Maintenance",   cc:"CC-1210", budget: 9650, actual: 9920, forecast:13340, outlook:"over",     note:"unplanned overhaul" },
+  { name:"Electrical Maintenance",   cc:"CC-1220", budget: 4280, actual: 4180, forecast: 5610, outlook:"under",    note:"deferred AVR upgrade" },
+  { name:"Instrumentation & Controls",cc:"CC-1230",budget: 3120, actual: 3290, forecast: 4280, outlook:"over",     note:"DCS licence renewal" },
+  { name:"Fuel — Gas",               cc:"CC-1300", budget:46200, actual:43880, forecast:62150, outlook:"under",    note:"gas hedge in the money" },
+  { name:"Fuel — Diesel Backup",     cc:"CC-1310", budget: 2100, actual: 2380, forecast: 3120, outlook:"over",     note:"extra start-ups Q3" },
+  { name:"HSE & Environment",        cc:"CC-1400", budget: 1640, actual: 1490, forecast: 2180, outlook:"under",    note:"audit savings" },
+  { name:"HR & Admin",               cc:"CC-1500", budget: 3850, actual: 3970, forecast: 5180, outlook:"on-plan",  note:"" },
+  { name:"Finance & Treasury",       cc:"CC-1600", budget: 1280, actual: 1240, forecast: 1690, outlook:"on-plan",  note:"" },
+  { name:"Procurement",              cc:"CC-1700", budget: 2240, actual: 2180, forecast: 2960, outlook:"on-plan",  note:"" },
+  { name:"IT & Cyber",               cc:"CC-1800", budget: 1820, actual: 2010, forecast: 2660, outlook:"over",     note:"OT segmentation" },
+  { name:"Engineering",              cc:"CC-1900", budget: 2960, actual: 2840, forecast: 3920, outlook:"under",    note:"" },
+  { name:"Plant Management",         cc:"CC-2000", budget: 1480, actual: 1530, forecast: 2010, outlook:"on-plan",  note:"" },
+];
+const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const monthlyB = [11.2,22.4,33.6,44.8,56.0,67.2,78.4,89.6,99.0,110.5,122.0,134.5];
+const monthlyA = [10.8,21.9,33.1,44.0,55.0,66.2,77.5,88.4,99.1,null,null,null];
+const monthlyF = [10.8,21.9,33.1,44.0,55.0,66.2,77.5,88.4,99.1,110.0,121.5,134.8];
+const compMix = [0.55, 0.18, 0.16, 0.11];
+const compLabels = ["Fuel","Labour","Maintenance","G&A · Other"];
+const compColors = ["#1F5C3F","#1A2E5C","#B85A2E","#9B7A1C"];
+
+const $ = id => document.getElementById(id);
+const fmt0 = n => n.toLocaleString('en-US',{maximumFractionDigits:0});
+const pct  = n => (n>=0?"+":"") + (n*100).toFixed(1)+"%";
+
+/* ===== Table ===== */
+function renderTable(){
+  const body = $("deptBody"); body.innerHTML = "";
+  let tB=0, tA=0, tF=0;
+  departments.forEach(d=>{
+    const v = d.budget - d.actual, vp = v/d.budget;
+    const pillCls = d.outlook==="under"?"pill-sage":d.outlook==="over"?"pill-terra":"pill-gold";
+    const pillText = d.outlook==="under"?"Under":d.outlook==="over"?"Over":"On plan";
+    tB+=d.budget; tA+=d.actual; tF+=d.forecast;
+    body.insertAdjacentHTML("beforeend",`
+      <tr>
+        <td><div class="font-semibold">${d.name}</div><div class="text-[10.5px] italic" style="color:var(--muted)">${d.note}</div></td>
+        <td class="num text-[11px]" style="color:var(--muted)">${d.cc}</td>
+        <td class="num">${fmt0(d.budget)}</td>
+        <td class="num"><strong>${fmt0(d.actual)}</strong></td>
+        <td class="num" style="color:var(--muted)">${fmt0(d.forecast)}</td>
+        <td class="num ${v>=0?'pos':'neg'}">${(v>=0?'+':'')}${fmt0(v)}</td>
+        <td class="num ${v>=0?'pos':'neg'}">${pct(vp)}</td>
+        <td><span class="${pillCls}">${pillText}</span></td>
+      </tr>`);
+  });
+  const tv = tB - tA, tvp = tv/tB;
+  $("tBud").textContent = fmt0(tB);
+  $("tAct").textContent = fmt0(tA);
+  $("tFc").textContent  = fmt0(tF);
+  $("tVar").textContent = (tv>=0?'+':'')+fmt0(tv);
+  $("tVarPct").textContent = pct(tvp);
+  $("tOutlook").innerHTML = tv>=0 ? '<span class="pill-sage">Under</span>' : '<span class="pill-terra">Over</span>';
+
+  $("kBud").textContent = "$ "+(tB/1000).toFixed(1)+"M";
+  $("kAct").textContent = "$ "+(tA/1000).toFixed(1)+"M";
+  $("kFc").textContent  = "$ "+(tF/1000).toFixed(1)+"M";
+  $("kVar").textContent = (tv>=0?"+":"-")+"$ "+(Math.abs(tv)/1000).toFixed(2)+"M";
+  $("kVarPct").textContent = pct(tvp);
+  $("vTag").textContent = tv>=0?"favourable":"unfavourable";
+  $("vTag").className = tv>=0?"pill-sage":"pill-terra";
+  $("varHeadline").textContent = "$ "+(Math.abs(tv)/1000).toFixed(2)+"M";
+
+  $("mixTotal").textContent = "$ "+(tA/1000).toFixed(1)+"M";
+  $("mix1").textContent = (compMix[0]*100).toFixed(0)+"%";
+  $("mix2").textContent = (compMix[1]*100).toFixed(0)+"%";
+  $("mix3").textContent = (compMix[2]*100).toFixed(0)+"%";
+  $("mix4").textContent = (compMix[3]*100).toFixed(0)+"%";
+
+  /* Department rows (mini horizontal bars per dept) */
+  const host = $("deptRows"); host.innerHTML = "";
+  const maxBud = Math.max(...departments.map(d=>d.budget));
+  departments.slice(0,8).forEach(d=>{
+    const v = d.budget - d.actual, vp = v/d.budget;
+    const wB = (d.budget/maxBud)*100;
+    const wA = (d.actual/maxBud)*100;
+    const wF = (d.forecast/1.4/maxBud)*100;
+    host.insertAdjacentHTML("beforeend", `
+      <div>
+        <div class="flex items-center justify-between text-xs mb-1">
+          <span class="font-semibold">${d.name}</span>
+          <span class="num text-[11px] ${v>=0?'pos':'neg'}">${(v>=0?'+':'')}${fmt0(v)}k · ${pct(vp)}</span>
+        </div>
+        <div class="grid gap-[3px]">
+          <div class="seg"><span style="left:0;width:${wB}%;background:#D6CCB2;"></span></div>
+          <div class="seg"><span style="left:0;width:${wA}%;background:#1F5C3F;"></span></div>
+          <div class="seg"><span style="left:0;width:${wF}%;background:#B85A2E;opacity:.6"></span></div>
+        </div>
+      </div>`);
+  });
+
+  /* Top movers */
+  const sorted = [...departments].map(d=>({name:d.name, v:d.budget-d.actual, vp:(d.budget-d.actual)/d.budget})).sort((a,b)=>b.v-a.v);
+  const fav = sorted.slice(0,5), unf = sorted.slice(-5).reverse();
+  $("topFav").innerHTML = fav.map((x,i)=>`<li class="flex items-baseline justify-between gap-2"><div><span class="serif font-bold mr-1">${(i+1).toString().padStart(2,'0')}</span>${x.name}</div><span class="num text-xs pos">+${fmt0(x.v)}k</span></li>`).join("");
+  $("topUnf").innerHTML = unf.map((x,i)=>`<li class="flex items-baseline justify-between gap-2"><div><span class="serif font-bold mr-1">${(i+1).toString().padStart(2,'0')}</span>${x.name}</div><span class="num text-xs neg">${fmt0(x.v)}k</span></li>`).join("");
+}
+
+/* ===== Charts ===== */
+let monthlyChart, mixChart;
+function buildCharts(){
+  Chart.defaults.color = "#3A3A36";
+  Chart.defaults.borderColor = "#D6CCB2";
+  Chart.defaults.font.family = "IBM Plex Sans";
+  Chart.defaults.font.size = 11;
+
+  monthlyChart = new Chart($("monthlyChart"),{
+    data:{ labels:months, datasets:[
+      { type:"line", label:"Budget",   data:monthlyB, borderColor:"#9B7A1C", backgroundColor:"transparent", borderDash:[5,3], borderWidth:1.8, tension:.3, pointRadius:0 },
+      { type:"line", label:"Actual",   data:monthlyA, borderColor:"#1F5C3F", backgroundColor:"rgba(31,92,63,.10)", fill:true, borderWidth:2.5, tension:.3, pointRadius:3 },
+      { type:"line", label:"Forecast", data:monthlyF, borderColor:"#B85A2E", borderWidth:2, tension:.3, pointRadius:0 },
+    ]},
+    options:{ plugins:{legend:{display:true,labels:{boxWidth:10,font:{size:11}}}},
+      scales:{ y:{ticks:{callback:v=>"$"+v+"M"},grid:{color:"#E8DFC8"}}, x:{grid:{display:false}} } }
+  });
+  mixChart = new Chart($("mixChart"),{ type:"doughnut",
+    data:{ labels:compLabels, datasets:[{ data:compMix, backgroundColor:compColors, borderWidth:2, borderColor:"#F4EFE2", hoverOffset:6 }]},
+    options:{ cutout:"68%", plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>`${c.label}: ${(c.parsed*100).toFixed(0)}%`}}} }
+  });
+}
+
+/* ===== Heatmap ===== */
+function renderHeatmap(){
+  let html = `<div style="display:grid;grid-template-columns: 220px repeat(12,1fr);gap:1px;">`;
+  html += `<div class="hhead"></div>` + months.map(m=>`<div class="hhead">${m}</div>`).join("");
+  departments.forEach((d,r)=>{
+    html += `<div class="hrow">${d.cc} · ${d.name}</div>`;
+    for(let c=0;c<12;c++){
+      const baseVp = (d.budget - d.actual)/d.budget;
+      const noise = ((Math.sin(r*7 + c*1.7) + Math.cos(r*3.3 + c*2.1))/2) * 0.06;
+      const v = baseVp*0.55 + noise;
+      const t = Math.max(-1, Math.min(1, v/0.15));
+      let bg, fg = "#181818";
+      if(t > 0.6)        { bg = "#1F5C3F"; fg = "#fff"; }
+      else if(t > 0.2)   { bg = "#8FB59C"; }
+      else if(t > -0.2)  { bg = "#E7E0CC"; }
+      else if(t > -0.6)  { bg = "#E0A98D"; }
+      else               { bg = "#B85A2E"; fg = "#fff"; }
+      const txt = (v>=0?"+":"")+(v*100).toFixed(1)+"%";
+      html += `<div class="hcell" style="background:${bg};color:${fg}">${txt}</div>`;
+    }
+  });
+  html += `</div>`;
+  $("heatmap").innerHTML = html;
+}
+
+/* ===== Clock ===== */
+function tickSync(){
+  const t = new Date();
+  const hh = String(t.getHours()).padStart(2,"0");
+  const mm = String(t.getMinutes()).padStart(2,"0");
+  const ss = String(t.getSeconds()).padStart(2,"0");
+  $("lastSync").textContent = `Last sync ${hh}:${mm}:${ss}`;
+}
+setInterval(tickSync,1000); tickSync();
+
+buildCharts();
+renderTable();
+renderHeatmap();
+["period","year","entity"].forEach(id=>$(id).addEventListener("change",()=>{
+  departments.forEach(d=>{ d.actual = Math.round(d.actual * (1 + (Math.random()-0.5)*0.06)); });
+  renderTable(); renderHeatmap();
+}));
+</script>
+</body>
+</html>
