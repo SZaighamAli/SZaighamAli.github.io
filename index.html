@@ -34,7 +34,8 @@
   .btn-ghost{background:rgba(15,30,54,.45);border:1px solid var(--line2);color:var(--text);backdrop-filter:blur(6px);}
   .btn-ghost:hover{border-color:var(--accent);background:rgba(59,130,246,.08);}
   .btn-sm{padding:9px 14px;font-size:12px;}
-  .marquee{display:flex;gap:48px;animation:scroll 36s linear infinite;width:max-content;align-items:center;}
+  .marquee{display:flex;gap:0;animation:scroll 28s linear infinite;width:max-content;align-items:center;}
+  .marquee>*{flex-shrink:0;}
   @keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);}
   .reveal.in{opacity:1;transform:none;}
@@ -95,17 +96,22 @@
 <section id="top">
   <div class="max-w-[1280px] mx-auto px-6 pt-24 pb-16 grid md:grid-cols-12 gap-12 items-center">
     <div class="md:col-span-7 reveal">
-      <div class="flex flex-wrap gap-2 mb-7">
+      <div class="flex flex-wrap gap-2 mb-5">
         <span class="chip chip-dot">Available · Dubai &amp; Remote</span>
-        <span class="chip chip-gold">15 years · Oil &amp; Gas · Marine · Trading</span>
+        <span class="chip chip-gold">15 years experience</span>
       </div>
-      <h1 class="display text-[64px] md:text-[96px] leading-[0.95] font-bold tracking-tight">
-        <span class="grad">Finance that</span><br/>
-        <span class="grad-gold">runs itself.</span>
+      <h1 class="display text-[60px] md:text-[88px] leading-[0.95] font-bold tracking-tight">
+        <span class="grad">Finance, fluent</span><br/>
+        <span class="grad-gold">in code.</span>
       </h1>
-      <p class="text-[var(--muted)] text-lg md:text-xl mt-7 max-w-xl leading-relaxed">
-        I build the dashboards, models and AI-verified controls that turn finance from a Monday-morning bottleneck into a continuous decision engine — for founder-led groups in oil, gas, marine and commodities.
+      <p class="text-[var(--muted)] text-lg md:text-xl mt-6 max-w-xl leading-relaxed">
+        A certified financial analyst — corporate &amp; project finance — with a builder's hands. I model the business, then ship the dashboards, automations and AI-verified controls that run it. The combo founder-led groups in oil, gas, marine and energy actually need.
       </p>
+      <div class="flex flex-wrap gap-2 mt-6">
+        <span class="chip">Oil, Gas, Marine &amp; Energy · 8 yrs</span>
+        <span class="chip">Project Finance · USD 1.2B onshore refinery · 125,000 BPD</span>
+        <span class="chip">Ship Management · 30+ vessels</span>
+      </div>
       <div class="flex flex-wrap gap-3 mt-9">
         <a href="#work" class="btn btn-gold">See the Work</a>
         <a href="#contact" class="btn btn-ghost">Start a Conversation</a>
@@ -133,25 +139,11 @@
     </div>
   </div>
 
-  <!-- CREDENTIALS LOGO MARQUEE -->
+  <!-- CREDENTIALS LOGO MARQUEE — seamless infinite loop -->
   <div class="border-y border-[var(--line)] py-6 overflow-hidden">
     <div class="marquee logo-strip">
-      <span class="flex items-center gap-12 px-6">
-        <img src="acca.logo.png" alt="ACCA" />
-        <img src="cfa.logo.png" alt="CFA Institute" />
-        <img src="cpa.canada.jpeg" alt="CPA Canada" />
-        <img src="pwc.company.png" alt="PwC" />
-        <img src="google.webp" alt="Google Data Analytics" />
-        <img src="oxford.uni.png" alt="Oxford Brookes University" />
-      </span>
-      <span class="flex items-center gap-12 px-6">
-        <img src="acca.logo.png" alt="ACCA" />
-        <img src="cfa.logo.png" alt="CFA Institute" />
-        <img src="cpa.canada.jpeg" alt="CPA Canada" />
-        <img src="pwc.company.png" alt="PwC" />
-        <img src="google.webp" alt="Google Data Analytics" />
-        <img src="oxford.uni.png" alt="Oxford Brookes University" />
-      </span>
+      <span class="flex items-center gap-14 pr-14"><img src="acca.logo.png" alt="ACCA" /><img src="cfa.logo.png" alt="CFA Institute" /><img src="cpa.canada.jpeg" alt="CPA Canada" /><img src="pwc.company.png" alt="PwC" /><img src="google.webp" alt="Google Data Analytics" /><img src="oxford.uni.png" alt="Oxford Brookes" /></span>
+      <span class="flex items-center gap-14 pr-14"><img src="acca.logo.png" alt="ACCA" /><img src="cfa.logo.png" alt="CFA Institute" /><img src="cpa.canada.jpeg" alt="CPA Canada" /><img src="pwc.company.png" alt="PwC" /><img src="google.webp" alt="Google Data Analytics" /><img src="oxford.uni.png" alt="Oxford Brookes" /></span>
     </div>
   </div>
 </section>
@@ -197,12 +189,12 @@
     </div>
     <div class="text-sm text-[var(--muted)] max-w-xs">Operating roles, partners and audit clients across upstream, refining, power and trading.</div>
   </div>
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 reveal">
-    <div class="logo-tile"><img src="esnad.logo.png" alt="Esnad Africa Oil Services" /></div>
-    <div class="logo-tile"><img src="rockpetroleumtradingllc_logo.jpg" alt="Rock Petroleum Trading" /></div>
-    <div class="logo-tile"><img src="Taurus.arm.jpg" alt="Taurus ARM (Onex Holdings)" /></div>
-    <div class="logo-tile"><img src="Halliburton.logo.png" alt="Halliburton" /></div>
-    <div class="logo-tile"><img src="pwc.company.png" alt="PwC" /></div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 reveal items-stretch">
+    <div class="logo-tile h-24"><img src="esnad.logo.png" alt="Esnad Africa Oil Services" /></div>
+    <div class="logo-tile h-24"><img src="rockpetroleumtradingllc_logo.jpg" alt="Rock Petroleum Trading" /></div>
+    <div class="logo-tile h-24"><img src="Taurus.arm.jpg" alt="Taurus ARM (Onex Holdings)" /></div>
+    <div class="logo-tile h-24"><img src="Halliburton.logo.png" alt="Halliburton" /></div>
+    <div class="logo-tile h-24"><img src="pwc.company.png" alt="PwC" /></div>
   </div>
 
   <div class="space-y-5 mt-12">
